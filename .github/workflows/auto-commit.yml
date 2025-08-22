@@ -1,14 +1,16 @@
 name: Auto Commit Daily
 
-# Needed so the workflow can push back to your repo
 permissions:
   contents: write
 
 on:
   schedule:
-    # GitHub cron uses **UTC**. 09:00 IST = 03:30 UTC
-    - cron: "30 3 * * *"
-  workflow_dispatch: {} # allow manual run from Actions tab
+    # Run 4 times/day (all UTC)
+    - cron: "30 3 * * *"   # 09:00 IST
+    - cron: "30 9 * * *"   # 15:00 IST
+    - cron: "30 15 * * *"  # 21:00 IST
+    - cron: "30 21 * * *"  # 03:00 IST (next day)
+  workflow_dispatch: {} # allow manual run
 
 jobs:
   auto-commit:
@@ -31,5 +33,5 @@ jobs:
       - name: Commit & Push
         run: |
           git add activity.log
-          git commit -m "chore: automated commit on $(date -u +'%Y-%m-%d')" || echo "Nothing to commit"
+          git commit -m "chore: automated commit on $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
           git push
